@@ -1,4 +1,4 @@
-package api
+package tokeninfo
 
 import (
 	"github.com/gofiber/fiber/v2"

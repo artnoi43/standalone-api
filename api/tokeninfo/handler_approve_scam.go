@@ -1,4 +1,4 @@
-package api
+package tokeninfo
 
 import (
 	"github.com/artworkk/standalone-api/datamodel"

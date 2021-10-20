@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/artworkk/standalone-api/api"
+	"github.com/artworkk/standalone-api/api/auth"
+	"github.com/artworkk/standalone-api/api/tokeninfo"
 	"github.com/artworkk/standalone-api/config"
 	"github.com/artworkk/standalone-api/lib/postgres"
 	"github.com/gofiber/fiber/v2"
@@ -21,15 +22,22 @@ func main() {
 		panic(err.Error())
 	}
 
-	handler := api.NewHandler(db)
 	app := fiber.New()
 	app.Use(logger.New())
-	app.Get("/info/:tokenAddress", handler.GetInfo)
-	app.Get("/pending", handler.GetPending)
-	app.Get("/scams", handler.GetScams)
-	app.Post("/report-scam", handler.ReportScam)
-	app.Post("/approve-scam", handler.ApproveScam)
-	app.Delete("/delete-pending/:tokenAddress", handler.DeletePending)
+	authHandler := auth.NewHandler(db)
+	tokenInfoHandler := tokeninfo.NewHandler(db)
+
+	api := app.Group("/api")
+	authAPI := api.Group("/auth")
+	authAPI.Post("/register", authHandler.Register)
+	authAPI.Post("/login", authHandler.Login)
+	tokenInfoAPI := api.Group("/tokens")
+	tokenInfoAPI.Get("/info/:tokenAddress", tokenInfoHandler.GetInfo)
+	tokenInfoAPI.Get("/pending", tokenInfoHandler.GetPending)
+	tokenInfoAPI.Get("/scams", tokenInfoHandler.GetScams)
+	tokenInfoAPI.Post("/report-scam", tokenInfoHandler.ReportScam)
+	tokenInfoAPI.Post("/approve-scam", tokenInfoHandler.ApproveScam)
+	tokenInfoAPI.Delete("/delete-pending/:tokenAddress", tokenInfoHandler.DeletePending)
 
 	log.Fatal(app.Listen(conf.Port))
 }
