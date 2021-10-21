@@ -1,13 +1,15 @@
 package config
 
 import (
+	"github.com/artworkk/standalone-api/api/auth"
 	"github.com/artworkk/standalone-api/lib/postgres"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Port       string          `mapstructure:"listen_address"`
-	Postgres   postgres.Config `mapstructure:"postgres"`
+	Port     string          `mapstructure:"listen_address"`
+	Auth     auth.Config     `mapstructure:"auth"`
+	Postgres postgres.Config `mapstructure:"postgres"`
 }
 
 func LoadConfig(path string) (config *Config, err error) {

@@ -23,13 +23,13 @@ func (h *handler) Register(ctx *fiber.Ctx) error {
 
 	pw, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
 	newUser := datamodel.User{
-		UUID: uuid.NewString(),
+		UUID:     uuid.NewString(),
 		Username: req.Username,
 		Password: pw,
 	}
 
 	h.pg.Create(&newUser)
 	return ctx.JSON(map[string]interface{}{
-		"status": "registered successfully",
+		"message": "registered successfully",
 	})
 }

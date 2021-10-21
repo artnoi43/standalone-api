@@ -5,13 +5,17 @@ import (
 	"gorm.io/gorm"
 )
 
+const Secret = "secret"
+
 type handler struct {
-	pg *gorm.DB
+	pg     *gorm.DB
+	config Config
 }
 
-func NewHandler(db *gorm.DB) Handler {
+func NewHandler(db *gorm.DB, conf Config) Handler {
 	return &handler{
-		pg: db,
+		pg:     db,
+		config: conf,
 	}
 }
 

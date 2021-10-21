@@ -24,8 +24,10 @@ func main() {
 
 	app := fiber.New()
 	app.Use(logger.New())
-	authHandler := auth.NewHandler(db)
+	authHandler := auth.NewHandler(db, conf.Auth)
 	tokenInfoHandler := tokeninfo.NewHandler(db)
+
+	log.Println("JWT secret:", conf.Auth.JWTSecret)
 
 	api := app.Group("/api")
 	authAPI := api.Group("/auth")
@@ -36,8 +38,9 @@ func main() {
 	tokenInfoAPI.Get("/pending", tokenInfoHandler.GetPending)
 	tokenInfoAPI.Get("/scams", tokenInfoHandler.GetScams)
 	tokenInfoAPI.Post("/report-scam", tokenInfoHandler.ReportScam)
-	tokenInfoAPI.Post("/approve-scam", tokenInfoHandler.ApproveScam)
-	tokenInfoAPI.Delete("/delete-pending/:tokenAddress", tokenInfoHandler.DeletePending)
+	// These paths need authentication header
+	tokenInfoAPI.Post("/approve-scam", auth.Authenticate(conf.Auth), tokenInfoHandler.ApproveScam)
+	tokenInfoAPI.Delete("/delete-pending/:tokenAddress", auth.Authenticate(conf.Auth), tokenInfoHandler.DeletePending)
 
 	log.Fatal(app.Listen(conf.Port))
 }

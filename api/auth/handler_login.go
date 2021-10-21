@@ -1,7 +1,10 @@
 package auth
 
 import (
+	"time"
+
 	"github.com/artworkk/standalone-api/datamodel"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,7 +21,8 @@ func (h *handler) Login(ctx *fiber.Ctx) error {
 			"error": "bad request",
 		})
 	}
-	
+
+	// Find user in database
 	var user datamodel.User
 	h.pg.Where("username = ?", req.Username).First(&user)
 	if len(user.UUID) == 0 {
@@ -33,7 +37,20 @@ func (h *handler) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    user.UUID,
+		ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+	})
+
+	token, err := claims.SignedString([]byte(h.config.JWTSecret))
+	if err != nil {
+		return ctx.Status(500).JSON(map[string]interface{}{
+			"error": "could not login",
+		})
+	}
+
 	return ctx.JSON(map[string]interface{}{
-		"status": "logged in successfully",
+		"message": "logged in successfully",
+		"token":   token,
 	})
 }
