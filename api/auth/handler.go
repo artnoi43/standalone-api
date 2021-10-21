@@ -5,8 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const Secret = "secret"
-
 type handler struct {
 	pg     *gorm.DB
 	config Config
