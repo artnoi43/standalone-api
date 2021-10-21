@@ -3,18 +3,11 @@ package postgres
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-type Config struct {
-	Host     string `mapstructure:"host"`
-	Port     string `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DBName   string `mapstructure:"name"`
-}
 
 func New(conf Config) (db *gorm.DB, err error) {
 	// DB config
@@ -28,14 +21,14 @@ func New(conf Config) (db *gorm.DB, err error) {
 	}
 	log.Println("Database successfully connected")
 
-	// // Performance config?
-	// sqlDB, err := db.DB()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// sqlDB.SetMaxOpenConns(20)
-	// sqlDB.SetMaxIdleConns(10)
-	// sqlDB.SetConnMaxLifetime(time.Hour)
+	// Performance config?
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDB.SetMaxOpenConns(20)
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	return db, nil
 }
