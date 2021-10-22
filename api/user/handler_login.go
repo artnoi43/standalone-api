@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 	"time"
@@ -42,6 +42,7 @@ func (h *handler) Login(ctx *fiber.Ctx) error {
 		ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 	})
 
+	// Sign with auth.Config.JWTSecret
 	token, err := claims.SignedString([]byte(h.config.JWTSecret))
 	if err != nil {
 		return ctx.Status(500).JSON(map[string]interface{}{

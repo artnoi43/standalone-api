@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/artworkk/standalone-api/api/auth"
+	"github.com/artworkk/standalone-api/lib/auth"
 	"github.com/artworkk/standalone-api/lib/postgres"
 	"github.com/spf13/viper"
 )

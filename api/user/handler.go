@@ -1,16 +1,17 @@
-package auth
+package user
 
 import (
+	"github.com/artworkk/standalone-api/lib/auth"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 type handler struct {
 	pg     *gorm.DB
-	config Config
+	config auth.Config
 }
 
-func NewHandler(db *gorm.DB, conf Config) Handler {
+func NewHandler(db *gorm.DB, conf auth.Config) Handler {
 	return &handler{
 		pg:     db,
 		config: conf,
