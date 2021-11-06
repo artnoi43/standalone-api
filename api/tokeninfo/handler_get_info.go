@@ -10,9 +10,11 @@ import (
 
 func (h *handler) GetInfo(ctx *fiber.Ctx) error {
 	tokenAddr := ctx.Params("tokenAddress")
+	chain := ctx.Params("chain")
 	var token *datamodel.TokenInfo
 	result := h.pg.WithContext(ctx.Context()).Model(&datamodel.TokenInfo{}).Where(&datamodel.TokenInfo{
 		Address: tokenAddr,
+		Chain: chain,
 	}).First(&token)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return ctx.Status(404).JSON(map[string]string{

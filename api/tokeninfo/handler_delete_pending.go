@@ -10,8 +10,9 @@ import (
 
 func (h *handler) DeletePending(ctx *fiber.Ctx) error {
 	tokenAddr := ctx.Params("tokenAddress")
+	chain := ctx.Params("chain")
 	// Only delete those with pending_scam = true
-	result := h.pg.WithContext(ctx.Context()).Where("pending_scam = ?", true).Delete(&datamodel.TokenInfo{}, tokenAddr)
+	result := h.pg.WithContext(ctx.Context()).Where("pending_scam = ?", true).Where("chain = ?", chain).Delete(&datamodel.TokenInfo{}, tokenAddr)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return ctx.Status(404).JSON(map[string]string{
 			"warning": "tokeninfo not found",

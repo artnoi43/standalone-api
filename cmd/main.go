@@ -36,13 +36,13 @@ func main() {
 
 	tokenInfoAPI := api.Group("/tokens")
 	tokenInfoHandler := tokeninfo.NewHandler(db)
-	tokenInfoAPI.Get("/info/:tokenAddress", tokenInfoHandler.GetInfo)
+	tokenInfoAPI.Get("/info/:chain/:tokenAddress", tokenInfoHandler.GetInfo)
 	tokenInfoAPI.Get("/pending", tokenInfoHandler.GetPending)
 	tokenInfoAPI.Get("/scams", tokenInfoHandler.GetScams)
 	tokenInfoAPI.Post("/report-scam", tokenInfoHandler.ReportScam)
 	// These paths need authentication header
 	tokenInfoAPI.Post("/approve-scam", auth.Authenticate(conf.Auth), tokenInfoHandler.ApproveScam)
-	tokenInfoAPI.Delete("/delete-pending/:tokenAddress", auth.Authenticate(conf.Auth), tokenInfoHandler.DeletePending)
+	tokenInfoAPI.Delete("/delete-pending/:chain/:tokenAddress", auth.Authenticate(conf.Auth), tokenInfoHandler.DeletePending)
 
 	log.Fatal(app.Listen(conf.Port))
 }

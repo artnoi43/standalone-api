@@ -6,7 +6,8 @@ import (
 )
 
 type ApproveReq struct {
-	Addresses []string `json:"addresses"`
+	Address string `json:"address"`
+	Chain   string `json:"chain"`
 }
 
 func (h *handler) ApproveScam(ctx *fiber.Ctx) error {
@@ -18,12 +19,10 @@ func (h *handler) ApproveScam(ctx *fiber.Ctx) error {
 	}
 
 	// Range over request body addresses
-	for _, address := range req.Addresses {
-		h.pg.WithContext(ctx.Context()).Model(&datamodel.TokenInfo{}).Where("address = ?", address).Updates(map[string]interface{}{
-			"is_scam":      true,
-			"pending_scam": false,
-		})
-	}
+	h.pg.WithContext(ctx.Context()).Model(&datamodel.TokenInfo{}).Where("address = ?", req.Address).Where("chain = ?", req.Chain).Updates(map[string]interface{}{
+		"is_scam":      true,
+		"pending_scam": false,
+	})
 
 	return ctx.Status(201).JSON(map[string]bool{
 		"success": true,

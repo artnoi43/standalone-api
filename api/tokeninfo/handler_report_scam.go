@@ -6,7 +6,8 @@ import (
 )
 
 type ReportReq struct {
-	Addresses []string `json:"addresses"`
+	Address string `json:"address"`
+	Chain string   `json:"chain"`
 }
 
 func (h *handler) ReportScam(ctx *fiber.Ctx) error {
@@ -18,13 +19,12 @@ func (h *handler) ReportScam(ctx *fiber.Ctx) error {
 	}
 
 	// Range over request body addresses
-	for _, address := range req.Addresses {
-		h.pg.WithContext(ctx.Context()).Create(&datamodel.TokenInfo{
-			Address:     address,
-			IsScam:      false,
-			PendingScam: true,
-		})
-	}
+	h.pg.WithContext(ctx.Context()).Create(&datamodel.TokenInfo{
+		Address:     req.Address,
+		Chain:       req.Chain,
+		IsScam:      false,
+		PendingScam: true,
+	})
 
 	return ctx.Status(201).JSON(map[string]bool{
 		"success": true,
