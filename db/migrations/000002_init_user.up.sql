@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS "users" (
     "password" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ,
     "updated_at" TIMESTAMPTZ,
-    PRIMARY KEY ( "username" )
+    PRIMARY KEY ( "uuid" )
 )

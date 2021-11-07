@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/artworkk/standalone-api/api/todo"
 	"github.com/artworkk/standalone-api/api/tokeninfo"
 	"github.com/artworkk/standalone-api/api/user"
 	"github.com/artworkk/standalone-api/config"
@@ -33,6 +34,7 @@ func main() {
 	userHandler := user.NewHandler(db, conf.Auth)
 	userApi.Post("/register", userHandler.Register)
 	userApi.Post("/login", userHandler.Login)
+	userApi.Get("/", userHandler.GetUsers)
 
 	tokenInfoAPI := api.Group("/tokens")
 	tokenInfoHandler := tokeninfo.NewHandler(db)
@@ -43,6 +45,11 @@ func main() {
 	// These paths need authentication header
 	tokenInfoAPI.Post("/approve-scam", auth.Authenticate(conf.Auth), tokenInfoHandler.ApproveScam)
 	tokenInfoAPI.Delete("/delete-pending/:chain/:tokenAddress", auth.Authenticate(conf.Auth), tokenInfoHandler.DeletePending)
+
+	todoApi := api.Group("/todo")
+	todoHandler := todo.NewHandler(db)
+	todoApi.Get("/", auth.Authenticate(conf.Auth), todoHandler.GetTodo)
+	todoApi.Post("/", auth.Authenticate(conf.Auth), todoHandler.NewTodo)
 
 	log.Fatal(app.Listen(conf.Port))
 }

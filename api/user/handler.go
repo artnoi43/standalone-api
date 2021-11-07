@@ -21,4 +21,5 @@ func NewHandler(db *gorm.DB, conf auth.Config) Handler {
 type Handler interface {
 	Register(*fiber.Ctx) error
 	Login(*fiber.Ctx) error
+	GetUsers(*fiber.Ctx) error
 }
