@@ -24,7 +24,7 @@ func (h *handler) Login(ctx *fiber.Ctx) error {
 
 	// Find user in database
 	var user datamodel.User
-	h.pg.Where("username = ?", req.Username).First(&user)
+	h.pg.WithContext(ctx.Context()).Where("username = ?", req.Username).First(&user)
 	if len(user.UUID) == 0 {
 		return ctx.Status(400).JSON(map[string]interface{}{
 			"error": "incorrect username or password",

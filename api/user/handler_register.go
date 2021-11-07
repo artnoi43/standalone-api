@@ -21,6 +21,15 @@ func (h *handler) Register(ctx *fiber.Ctx) error {
 		})
 	}
 
+	// Find existing username
+	var user datamodel.User
+	h.pg.WithContext(ctx.Context()).Where("username = ?", req.Username).First(&user)
+	if user.Username != "" {
+		return ctx.Status(400).JSON(map[string]string{
+			"error": "duplicate username",
+		})
+	}
+
 	pw, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
 	newUser := datamodel.User{
 		UUID:     uuid.NewString(),
@@ -28,7 +37,7 @@ func (h *handler) Register(ctx *fiber.Ctx) error {
 		Password: pw,
 	}
 
-	h.pg.Create(&newUser)
+	h.pg.WithContext(ctx.Context()).Create(&newUser)
 	return ctx.JSON(map[string]interface{}{
 		"message": "registered successfully",
 	})
